@@ -1,8 +1,8 @@
 # Private Blockchain App
 
-Create a test application that allows the user to register stars, and track the ownership of each.
+This application allows many users to register stars, and track the ownership of each star.
 
-## What steps are needed to implement this application?
+## How to run this app?
 
 1.- The application will create a Genesis Block when we run the application.
 
@@ -35,11 +35,14 @@ Create a test application that allows the user to register stars, and track the 
 
 ## Run the app in docker
 
-Download the repo and type ...
+Download the repo and follow next steps
 
 Build the image <code>docker build -t boilerplatex . </code>
-Run the image and app <code>docker run -p 8000:8000 boilerplatex </code>
+Run the image and app <code>docker run -t -d -p 8000:8000 boilerplatex </code>
 List the running containers<code>docker ps </code>
+
+If you won't use the app is recommended to stop the container
+
 Stop the container<code>docker stop **(first 2 container name characters) </code>
 
 Once the app is running ...
@@ -52,11 +55,20 @@ Download and install Postman
 
 GET <code>localhost:8000/block/0</code>
 
+<center>
+<img src='images/block_0.png'/>
+<figcaption>Block 0</figcaption></center>
+
 ### 2.- Make the first request of ownership sending your wallet address.
 
 POST <code>localhost:8000/requestValidation</code>
 
 Body settings: raw, JSON
+
+<center>
+<img src='images/validation.png'/>
+<figcaption>VAlidation</figcaption></center>
+
 
 ### 3.- Sign the message with your Wallet. 
 
