@@ -18,7 +18,7 @@ After the app || container is running ...
 ## Test the app 
 
 Download and install Postman
-
+<br/>
 
 ### 1.- Make sure the app is working fine and it creates the Genesis Block.
 
@@ -38,6 +38,7 @@ Body settings: raw, JSON
 <center>
 <img src='images/validation.png'/>
 <figcaption>Validation</figcaption></center>
+<br/>
 
 
 ### 3.- Sign the message with your Wallet. 
@@ -49,6 +50,8 @@ Body settings: raw, JSON
 <center>
 <img src='images/signature.png'/>
 <figcaption>Signature</figcaption></center>
+<br/>
+
 
 ### 4.- Submit your Star.
 
@@ -74,7 +77,7 @@ Body settings: raw, JSON
 <center>
 <img src='images/post_star.png'/>
 <figcaption>Submitt a star</figcaption></center>
-
+<br/>
 
 ### Optional.- Retrieve Stars owned by me.
 
@@ -83,7 +86,7 @@ GET <code>localhost:8000/blocks/1HxxxxxkeaoZ*****************EzN</code>
 <center>
 <img src='images/owned_by.png'/>
 <figcaption>Retrieve owned info</figcaption></center>
-
+<br/>
 
 ### Optional.- Retrieve a star by it's hash.
 
@@ -92,4 +95,12 @@ GET <code>localhost:8000/block/hash/48************************************db779f
 <center>
 <img src='images/by_hash.png'/>
 <figcaption>Get star by hash</figcaption></center>
+<br/>
+<br/>
+
+<center> 
+Thanks!
+
+![Alt Text](https://i.imgur.com/50rDBpD.gif)
+</center>
 
