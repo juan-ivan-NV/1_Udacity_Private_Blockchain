@@ -79,6 +79,15 @@ Body settings: raw, JSON
 <figcaption>Submitt a star</figcaption></center>
 <br/>
 
+### 5.- Validate the chain.
+
+GET <code>localhost:8000/validateChain</code>
+
+<center>
+<img src='images/validate_c.png'/>
+<figcaption>Validate chain</figcaption></center>
+<br/>
+
 ### Optional.- Retrieve Stars owned by me.
 
 GET <code>localhost:8000/blocks/1HxxxxxkeaoZ*****************EzN</code>

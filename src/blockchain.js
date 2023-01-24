@@ -62,33 +62,30 @@ class Blockchain {
      * that this method is a private method. 
      */
 
-    _addBlock(block) {
+    _addBlock(block){
         let self = this;
-        try {
-            return new Promise(async (resolve, reject) => {
-                let currentBlock = block;
-                let currentHeight = self.height;
-                currentBlock.time = new Date().getTime().toString().slice(0, -3);
+        return new Promise(async (resolve, reject) => {
+            let currentHeight = self.height;
+            
+            block.previousBlockHash = self.chain[self.height] ? self.chain[self.height] : null;
+            block.time = new Date().getTime().toString().slice(0,-3);
+            block.height = currentHeight + 1;
+            block.hash = await SHA256(
+                JSON.stringify({ ...block, hash: null})).toString();
+            let blockValidation = 
+                (await self.validateChain()) &&
+                block.hash &&
+                block.time &&
+                block.height === self.chain.length;
 
-                if (currentHeight > 0) {
-                    currentBlock.height = currentHeight + 1;
-                    let previousBlock = self.chain[self.height];
-                    currentBlock.previousBlockHash = previousBlock.hash;
-                    currentBlock.hash = SHA256(JSON.stringify(currentBlock)).toString();
-                    self.chain.push(currentBlock);
-                    self.height += 1;
-                    resolve(currentBlock);
-                } else {
-                    currentBlock.height = currentHeight + 1;
-                    currentBlock.hash = SHA256(JSON.stringify(currentBlock)).toString();
-                    self.chain.push(currentBlock);
-                    self.height += 1;
-                    resolve(currentBlock);
-                }
-            });
-        } catch (error) {
-            console.log(`ERROR: ${error}`);
-        }
+            blockValidation ? resolve(block) : reject(new Error("Invalid block."));
+        }).catch ((error) => {
+            console.log(`[ERROR]: ${error}`);
+        }).then ((block) => {
+            self.chain.push(block);
+            self.height += 1;
+            return block;
+        });
     }
 
     /**
