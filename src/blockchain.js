@@ -65,26 +65,25 @@ class Blockchain {
     _addBlock(block){
         let self = this;
         return new Promise(async (resolve, reject) => {
-            let currentHeight = self.height;
-            
-            block.previousBlockHash = self.chain[self.height] ? self.chain[self.height] : null;
+            block.height = this.chain.length;
             block.time = new Date().getTime().toString().slice(0,-3);
-            block.height = currentHeight + 1;
-            block.hash = await SHA256(
-                JSON.stringify({ ...block, hash: null})).toString();
-            let blockValidation = 
-                (await self.validateChain()) &&
-                block.hash &&
-                block.time &&
-                block.height === self.chain.length;
 
-            blockValidation ? resolve(block) : reject(new Error("Invalid block."));
-        }).catch ((error) => {
-            console.log(`[ERROR]: ${error}`);
-        }).then ((block) => {
+            if (this.chain.length > 0) {
+                let previousBlock = this.chain[this.chain.length - 1];
+                block.previousBlockHash = previousBlock.hash;
+            }
+            
+            block.hash = SHA256(JSON.stringify(block)).toString();
             self.chain.push(block);
-            self.height += 1;
-            return block;
+
+            // if chain is invalid remove the last block
+            self.validateChain()
+                .then(errorLog => {
+                    if (errorLog.length > 0) {
+                        self.chain.pop();
+                        reject(errorLog);
+                    } else {resolve(block);}
+                });
         });
     }
 
@@ -212,19 +211,29 @@ class Blockchain {
     validateChain() {
         let self = this;
         let errorLog = [];
-        return new Promise(async (resolve, reject) => {
-            for (let i = 1; i < self.chain.length; i++){
-                let block = self.chain[i];
-                if(!(await block.validate())){
-                    errorLog.push(`ERROR: Block hash couldn't be validated at height ${i}`);
-                }
-                let previousBlockHash = self.chain[i - 1];
-                if(previousBlockHash !== block.previousBlockHash){
-                    errorLog.push(`ERROR: Hash is different in current block ${i} and previous block ${i-1}`);
-                }
-            }
-            if(errorLog.length > 0){resolve(errorLog);} 
-            else {resolve("Chain validated successfully");}
+        return new Promise((resolve) => {
+            let validateAllPromises = [];
+            self.chain.forEach((block, index) => {
+                if(block.height > 0){
+                    let previousBlock = self.chain[index - 1];
+                    if(block.previousBlockHash !== previousBlock.hash) {
+                        errorLog.push(`Block ${index} missmatch previousBlockHash = ${block.previousBlockHash}, actual previous block hash = ${previousBlock.hash}`);
+                    }
+                } 
+                validateAllPromises.push(block.validate());
+            });
+
+            Promise.all(validateAllPromises)
+                .then(blockValidation => {
+                    blockValidation.forEach((valid, index) => {
+                        if (!valid) {
+                            const invalidBlock = self.chain[index];
+                            const errorMessage = `Invalid Block ${index} and hash (${invalidBlock.hash})`;
+                            errorLog.push(errorMessage);
+                        }
+                    });
+                    resolve(errorLog);
+                });
         });
     }
 
